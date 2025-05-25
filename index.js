@@ -38,19 +38,33 @@ client.once(Events.ClientReady, () => {
   console.log(`✅ 로그인 완료 : ${client.user.tag}`);
 });
 
-const eventsPath = path.join(__dirname, "events");
-const eventFiles = fs
-  .readdirSync(eventsPath)
-  .filter((file) => file.endsWith(".js"));
+// interactionCreate 이벤트 핸들러 통합
+client.on(Events.InteractionCreate, async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
 
-for (const file of eventFiles) {
-  const filePath = path.join(eventsPath, file);
-  const event = require(filePath);
-  if (event.once) {
-    client.once(event.name, (...args) => event.execute(...args));
-  } else {
-    client.on(event.name, (...args) => event.execute(...args));
+  const command = client.commands.get(interaction.commandName);
+
+  if (!command) {
+    console.error(`❌ 명령어를 찾을 수 없음: ${interaction.commandName}`);
+    return;
   }
-}
+
+  try {
+    await command.execute(interaction);
+  } catch (error) {
+    console.error(`⚠️ ${interaction.commandName} 실행 중 오류 발생`, error);
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({
+        content: "❌ 명령어 실행 중 오류가 발생했습니다.",
+        ephemeral: true,
+      });
+    } else {
+      await interaction.reply({
+        content: "❌ 명령어 실행 중 오류가 발생했습니다.",
+        ephemeral: true,
+      });
+    }
+  }
+});
 
 client.login(token);
