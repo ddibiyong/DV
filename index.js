@@ -1,18 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const {
-  Client,
-  Collection,
-  GatewayIntentBits,
-  Events,
-  ActionRowBuilder,
-  StringSelectMenuBuilder,
-  EmbedBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  ActivityType,
-} = require("discord.js");
-const { token } = require('./config.json');
+const { Client, Collection, GatewayIntentBits, Events } = require("discord.js");
+const { token } = require("./config.json");
 
 const client = new Client({
   intents: [
@@ -20,7 +9,7 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.GuildMembers,
-  ]
+  ],
 });
 
 client.commands = new Collection();
@@ -44,6 +33,10 @@ for (const folder of commandFolders) {
     }
   }
 }
+
+client.once(Events.ClientReady, () => {
+  console.log(`✅ 로그인 완료 : ${client.user.tag}`);
+});
 
 const eventsPath = path.join(__dirname, "events");
 const eventFiles = fs
