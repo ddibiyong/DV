@@ -29,3 +29,6 @@ coverage/
 
 # 보안 키 및 인증서
 *.ppk
+
+# gitignore
+.gitignore
