@@ -1,10 +1,5 @@
 const {
   SlashCommandBuilder,
-  StringSelectMenuBuilder,
-  StringSelectMenuOptionBuilder,
-  ActionRowBuilder,
-  ComponentType,
-  MessageFlags,
 } = require("discord.js");
 
 function convertUnits(x) {
